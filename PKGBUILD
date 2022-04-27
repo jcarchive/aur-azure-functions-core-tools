@@ -20,9 +20,13 @@ package() {
 	#Create directories with permission rwxr-xr-x
 	install -m755 -d "$pkgdir/usr/share/$pkgname" "$pkgdir/usr/bin"
 
+  rm $srcdir/func.deps.json
 	cp -r $srcdir/* $pkgdir/usr/share/$pkgname
   chown -R root:root "$pkgdir/usr/share/$pkgname"
-  chmod ugo+x $srcdir/func
+  echo -e "#!/bin/bash\n" "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 /usr/share/$pkgname/func" > $pkgdir/usr/share/$pkgname/func-wrapper
 
-	ln -s "/usr/share/${pkgname}/func" "$pkgdir/usr/bin/func"
+  chmod ugo+x $pkgdir/usr/share/$pkgname/func
+  chmod ugo+x $pkgdir/usr/share/$pkgname/func-wrapper
+
+	ln -s "/usr/share/${pkgname}/func-wrapper" "$pkgdir/usr/bin/func"
 }
